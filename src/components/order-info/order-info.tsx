@@ -12,13 +12,10 @@ import { useDispatch, useSelector } from '../../services/store';
 import type { TIngredient } from '@utils-types';
 
 export const OrderInfo = (): React.JSX.Element => {
-  /** TODO: взять переменные orderData и ingredients из стора */
   const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
 
   const orderData = useSelector(selectSelectedOrder);
-  // const isLoading = useSelector(selectSelectedOrderLoading);
-  // const error = useSelector(selectSelectedOrderError);
   const ingredients = useSelector(selectIngredients);
 
   useEffect(() => {
@@ -27,7 +24,6 @@ export const OrderInfo = (): React.JSX.Element => {
     }
   }, [dispatch, number]);
 
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 

@@ -5,7 +5,6 @@ import { selectIngredients } from '../../services/slices/ingredientSlice';
 import { useSelector } from '../../services/store';
 
 export const IngredientDetails = (): React.JSX.Element => {
-  // TODO: Взять переменную из стора
   const { id } = useParams();
   const ingredients = useSelector(selectIngredients);
   const ingredientData = ingredients.find((ingredient) => ingredient._id === id);

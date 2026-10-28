@@ -1,3 +1,4 @@
+import { selectUser } from '@/services/slices/userSlice';
 import { BurgerConstructorUI } from '@ui';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,9 +19,8 @@ import { useDispatch, useSelector } from '../../services/store';
 import type { TConstructorIngredient, TConstructorState, TOrder } from '@utils-types';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /** TODO: Взять переменные constructorItems, orderRequest и orderModalData из стора */
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const bun = useSelector(selectConstructorBun);
   const ingredients = useSelector(selectConstructorIngredients);

@@ -9,8 +9,6 @@ import {
 } from '../../services/slices/orderSlice';
 import { useDispatch, useSelector } from '../../services/store';
 
-// import type { TOrder } from '@utils-types';
-
 export const ProfileOrders = (): React.JSX.Element => {
   const dispatch = useDispatch();
 
@@ -25,13 +23,5 @@ export const ProfileOrders = (): React.JSX.Element => {
     void dispatch(fetchUserOrders());
   }, [dispatch]);
 
-  if (isLoading) {
-    return <p>Загрузка истории заказов...</p>;
-  }
-
-  if (error) {
-    return <p>Не удалось загрузить историю заказов: {error}</p>;
-  }
-
-  return <ProfileOrdersUI orders={orders} />;
+  return <ProfileOrdersUI orders={orders} isLoading={isLoading} error={error} />;
 };

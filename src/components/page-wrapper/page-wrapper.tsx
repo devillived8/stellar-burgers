@@ -8,7 +8,7 @@ import styles from './page-wrapper.module.css';
 export const PageWrapper = memo(function PageWrapper({
   title,
   useOrderNumber = false,
-  marginTop = 40,
+  variant,
   children,
 }: PageWrapperProps): React.JSX.Element {
   const { number } = useParams<{ number: string }>();
@@ -19,8 +19,12 @@ export const PageWrapper = memo(function PageWrapper({
     ? 'text text_type_digits-default'
     : 'text text_type_main-large';
 
+  const pageClassName = [styles.page, variant ? styles[variant] : '']
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <main className={styles.page} style={{ marginTop }}>
+    <main className={pageClassName}>
       {pageTitle && <h1 className={titleClassName}>{pageTitle}</h1>}
       {children}
     </main>

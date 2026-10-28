@@ -5,8 +5,7 @@ import { selectUser, updateUserThunk } from '../../services/slices/userSlice';
 import { useSelector, useDispatch } from '../../services/store';
 
 export const Profile = (): React.JSX.Element => {
-  /** TODO: Взять переменную из стора */
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
   const userName = user?.name ?? '';
@@ -24,20 +23,29 @@ export const Profile = (): React.JSX.Element => {
       name: userName,
       email: userEmail,
     }));
-  }, [user]);
+  }, [userName, userEmail]);
 
   const isFormChanged =
     formValue.name !== userName || formValue.email !== userEmail || !!formValue.password;
 
-  const handleSubmit = (e: SyntheticEvent): void => {
+  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
-    void dispath(
-      updateUserThunk({
-        name: formValue.name,
-        email: formValue.email,
-        ...(formValue.password ? { password: formValue.password } : {}),
-      })
-    );
+    try {
+      await dispatch(
+        updateUserThunk({
+          name: formValue.name,
+          email: formValue.email,
+          ...(formValue.password ? { password: formValue.password } : {}),
+        })
+      ).unwrap();
+
+      setFormValue((prevState) => ({
+        ...prevState,
+        password: '',
+      }));
+    } catch (error) {
+      console.error('Не удалось обновить профиль:', error);
+    }
   };
 
   const handleCancel = (e: SyntheticEvent): void => {
@@ -61,7 +69,9 @@ export const Profile = (): React.JSX.Element => {
       formValue={formValue}
       isFormChanged={isFormChanged}
       handleCancel={handleCancel}
-      handleSubmit={handleSubmit}
+      handleSubmit={(e) => {
+        void handleSubmit(e);
+      }}
       handleInputChange={handleInputChange}
     />
   );

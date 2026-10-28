@@ -12,14 +12,7 @@ import {
 } from '@pages';
 import { Preloader } from '@ui';
 import { useEffect } from 'react';
-import {
-  Routes,
-  Route,
-  Outlet,
-  useNavigate,
-  useLocation,
-  Navigate,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import {
   fetchIngredients,
@@ -29,16 +22,11 @@ import {
 } from '../../services/slices/ingredientSlice';
 import { getUserThunk, setAuthChecked } from '../../services/slices/userSlice';
 import { useDispatch, useSelector } from '../../services/store';
+import { PageWrapper } from '../page-wrapper';
+import { ProtectedRoute } from '../protected-route/protected-route';
 
 import type { AppContentProps } from './type';
-import type { TIngredient } from '@utils-types';
-import type { Location } from 'react-router-dom';
-
-type TLocationState = {
-  background?: Location;
-};
-
-import { PageWrapper } from '../page-wrapper';
+import type { TIngredient, TLocationState } from '@utils-types';
 
 import '../../index.css';
 
@@ -111,6 +99,10 @@ const RouteComponent = (): React.JSX.Element => {
   const locationState = location.state as TLocationState | null;
   const background = locationState?.background;
 
+  const handleCloseModal = (): void => {
+    void navigate(-1);
+  };
+
   return (
     <>
       <Routes location={background ?? location}>
@@ -119,7 +111,7 @@ const RouteComponent = (): React.JSX.Element => {
         <Route
           path="/feed/:number"
           element={
-            <PageWrapper useOrderNumber marginTop={122}>
+            <PageWrapper useOrderNumber variant="order">
               <OrderInfo />
             </PageWrapper>
           }
@@ -127,12 +119,12 @@ const RouteComponent = (): React.JSX.Element => {
         <Route
           path="/ingredients/:id"
           element={
-            <PageWrapper title="Детали ингредиента" marginTop={80}>
+            <PageWrapper title="Детали ингредиента" variant="ingredient">
               <IngredientDetails />
             </PageWrapper>
           }
         />
-        <Route element={<GuestRoute />}>
+        <Route element={<ProtectedRoute onlyUnAuth />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -145,7 +137,7 @@ const RouteComponent = (): React.JSX.Element => {
           <Route
             path="/profile/orders/:number"
             element={
-              <PageWrapper useOrderNumber marginTop={122}>
+              <PageWrapper useOrderNumber variant="order">
                 <OrderInfo />
               </PageWrapper>
             }
@@ -160,7 +152,7 @@ const RouteComponent = (): React.JSX.Element => {
           <Route
             path="/ingredients/:id"
             element={
-              <Modal title="Детали ингредиента" onClose={() => void navigate(-1)}>
+              <Modal title="Детали ингредиента" onClose={handleCloseModal}>
                 <IngredientDetails />
               </Modal>
             }
@@ -168,7 +160,7 @@ const RouteComponent = (): React.JSX.Element => {
           <Route
             path="/feed/:number"
             element={
-              <Modal title="Информация о заказе" onClose={() => void navigate(-1)}>
+              <Modal title="Информация о заказе" onClose={handleCloseModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -176,7 +168,7 @@ const RouteComponent = (): React.JSX.Element => {
           <Route
             path="/profile/orders/:number"
             element={
-              <Modal title="Информация о заказе" onClose={() => void navigate(-1)}>
+              <Modal title="Информация о заказе" onClose={handleCloseModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -185,36 +177,4 @@ const RouteComponent = (): React.JSX.Element => {
       )}
     </>
   );
-};
-
-const ProtectedRoute = (): React.JSX.Element => {
-  const user = useSelector((state) => state.user.user);
-  const isAuthChecked = useSelector((state) => state.user.isAuthChecked);
-
-  const location = useLocation();
-
-  if (!isAuthChecked) {
-    return <Preloader />;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  return <Outlet />;
-};
-
-const GuestRoute = (): React.JSX.Element => {
-  const user = useSelector((state) => state.user.user);
-  const isAuthChecked = useSelector((state) => state.user.isAuthChecked);
-
-  if (!isAuthChecked) {
-    return <Preloader />;
-  }
-
-  if (user) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <Outlet />;
 };
