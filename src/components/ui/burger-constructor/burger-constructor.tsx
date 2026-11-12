@@ -77,7 +77,13 @@ export const BurgerConstructorUI = ({
         <p className={`text ${styles.text} mr-2`}>{price}</p>
         <CurrencyIcon type="primary" />
       </div>
-      <Button htmlType="button" type="primary" size="large" onClick={onOrderClick}>
+      <Button
+        htmlType="button"
+        type="primary"
+        size="large"
+        disabled={!constructorItems.bun || orderRequest}
+        onClick={onOrderClick}
+      >
         Оформить заказ
       </Button>
     </div>
